@@ -45,7 +45,7 @@ module Spree
       return if not filter
 
       if filter[:values].try(:any?) and filter[:values].first.is_a?(Range)
-        range = values.split('..').map{|d| Integer(d)}
+        range = values.split('..').map{|d| Float(d)}
         query.build{|q| q.with(search_field, range[0]..range[1])}
       elsif filter[:multiple] 
         values = values.split("~")
