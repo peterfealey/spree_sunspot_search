@@ -8,6 +8,7 @@ module Spree
         with(:deleted_at).equal_to nil
         with(:price).greater_than 0
         with(:currency).equal_to Spree::Config[:currency]
+        with(:is_active).equal_to true
 
         order_by(
               params[:order_by] ? params[:order_by] : :price,
