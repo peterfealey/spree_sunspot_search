@@ -30,7 +30,7 @@ module Spree
 
       solr_filters = {}
       filters.map{|k,v| solr_filters[k.to_sym] = Spree::SolrSearch.add_filter(query,k,v)} if not filters.empty?
-      query.build {|q| q.keywords(params[:keywords]) } if params[:keywords]
+      query.build {|q| q.keywords(params[:keywords]){minimum_match 1} } if params[:keywords]
 
       Spree::SolrFacets.filters.each_pair do |k,v| 
         Spree::SolrSearch.add_facet(query, v, solr_filters[k.to_sym], self.get_prefix(params, v))
