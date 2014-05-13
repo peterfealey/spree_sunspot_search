@@ -45,6 +45,8 @@ module Spree
 
       return if not filter
 
+      localized_field = filter[:localized] ? "#{filter[:search_field]}_#{I18n.locale}" : filter[:search_field]
+
       if filter[:values].try(:any?) and filter[:values].first.is_a?(Range)
         range = values.split('..').map{|d| Float(d)}
         query.build{|q| q.with(search_field, range[0]..range[1])}
@@ -52,14 +54,14 @@ module Spree
         values = values.split("~")
         query.build do |q|
           solr_filter = q.any_of do |q|
-            values.each{|v| q.with(search_field, v)}
+            values.each{|v| q.with(localized_field, v)}
           end
         end
       else
         values = values.split("~")
         query.build do |q|
           solr_filter = q.all_of do |q|
-            values.each{|v| q.with(search_field, v)}
+            values.each{|v| q.with(localized_field, v)}
           end
         end
       end
@@ -98,11 +100,13 @@ module Spree
           end
         end
       else
+        localized_field = filter[:localized] ? "#{filter[:search_field]}_#{I18n.locale}" : filter[:search_field]
+
         query.build do |q|
           if filter[:multiple]
-            q.facet(filter[:search_field], :exclude => solr_filter)
+            q.facet(localized_field, :exclude => solr_filter)
           else
-            q.facet(filter[:search_field], :prefix => prefix)
+            q.facet(localized_field, :prefix => prefix)
           end
         end
       end
